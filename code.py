@@ -8,12 +8,14 @@ import adafruit_ntp
 import blinkpatterns
 import BinProcess
 import GenericFunctions
+import secrets
 #  from collections import defaultdict
 
 #  Quickboot skips the Startup animations and the checks
 #  (i.e. that we have internet etc)
 quickboot = 1
 hasErrored = 0
+currentDate =
 print("Starting the Bindicator!")
 if quickboot == 0:
     blinkpatterns.bootup()
@@ -21,7 +23,7 @@ if quickboot == 0:
 # Get wifi details and more from a secrets.py file
 print("Get Secrets")
 try:
-    from secrets import ParsedBinData
+    ParsedBinData = secrets.GetData()
 except ImportError:
     blinkpatterns.GenericError()
     print("Info we need is all in secrets. go populate it")
@@ -74,7 +76,9 @@ if ParsedBinData['BinData']['UseURL'] == 1:
 else:
     print("Using Secrets BinData")
     try:
-        print("You have {} bins to process".format(len(ParsedBinData['BinData']['StoredData']['Data'])))
+        print("You have {} bins to process"
+            .format(len(ParsedBinData['BinData']['StoredData']['Data'])))
+        print(ParsedBinData['BinData']['StoredData']['format'])
         sleeptime = BinProcess.StoredDataProcessor(ParsedBinData['BinData']['StoredData'])
     except RuntimeError:
         hasErrored = 1

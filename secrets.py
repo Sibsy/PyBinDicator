@@ -3,9 +3,8 @@ import Bindicator
 
 jsonstr = """
 {
-secrets = {
-    "ssid": "YourSSID",
-    "password": "WIFIPass",
+    "ssid": "Sibs_Home",
+    "password": "fourwordsalluppercase",
     "BinData": {
         "UseURL": 0,
         "AlertPreviousNight": 1,
