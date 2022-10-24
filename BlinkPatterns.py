@@ -104,10 +104,37 @@ def writeBin(Bin):
         for i in Bin:
             pixels[i] = RED
 
+
+def GenericError():
+    pixels = neopixel.NeoPixel(
+        pixel_pin, num_pixels, brightness=pixel_brightness, auto_write=False
+    )
+    pixels[0] = OFF
+    pixels[1] = OFF
+    pixels[2] = OFF
+    pixels[3] = RED
+    pixels[4] = RED
+    pixels[5] = OFF
+    pixels[6] = OFF
+    pixels[7] = OFF
+
+def NoWifiError():
+    pixels = neopixel.NeoPixel(
+        pixel_pin, num_pixels, brightness=pixel_brightness, auto_write=False
+    )
+    pixels[0] = OFF
+    pixels[1] = RED
+    pixels[2] = OFF
+    pixels[3] = OFF
+    pixels[4] = OFF
+    pixels[5] = OFF
+    pixels[6] = RED
+    pixels[7] = OFF
+
 # If you see this color pattern.
 # it means there are no bins due to go out at all in the future
 # (might need to update the data)
-def NoDateFound():
+def NoDateFoundError():
     pixels = neopixel.NeoPixel(
         pixel_pin, num_pixels, brightness=pixel_brightness, auto_write=False
     )
