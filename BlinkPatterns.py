@@ -4,27 +4,9 @@ import board
 import time
 from rainbowio import colorwheel
 
-# turn this into a class to call
-pixel_pin = board.A1
-num_pixels = 8
-pixel_brightness = 0.3
-RED = (255, 0, 0)
-ORANGE = (255, 34, 0)
-YELLOW = (255, 170, 0)
-GREEN = (0, 255, 0)
-CYAN = (0, 255, 255)
-BLUE = (0, 0, 255)
-VIOLET = (153, 0, 255)
-MAGENTA = (255, 0, 51)
-PINK = (255, 51, 119)
-AQUA = (85, 125, 255)
-WHITE = (255, 255, 255)
-OFF = (0, 0, 0)
-
-
 def bootup():
     print("Booted Up")
-    pixel = neopixel.NeoPixel(board.NEOPIXEL, 1)
+    pixel = neopixel.NeoPixel(pixel_pin, 1)
     red = 0
     blue = 0
     green = 0

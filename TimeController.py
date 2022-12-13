@@ -4,8 +4,7 @@ import digitalio
 import neopixel
 import time
 
-
-def DeepSleep(TimeToSleep):
+def sleep(self, TimeToSleep):
     np_power = digitalio.DigitalInOut(board.NEOPIXEL_POWER)
     np_power.switch_to_output(value=False)
     np = neopixel.NeoPixel(board.NEOPIXEL, 1)
@@ -19,4 +18,5 @@ def DeepSleep(TimeToSleep):
     time_alarm = alarm.time.TimeAlarm(monotonic_time=time.monotonic() + TimeToSleep)
     alarm.exit_and_deep_sleep_until_alarms(time_alarm)
 
-
+def checkDate(self):
+    print('check date')

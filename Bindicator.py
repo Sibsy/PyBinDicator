@@ -1,3 +1,28 @@
+import GlowBitController
+import TimeController
+import ButtonController
+
+def startDebug():
+    print("Debug Mode")
+
+    #instantiate the controllers.
+    button = ButtonController.ButtonController()
+    gbit = GlowBitController.GlowBitController()
+
+    #test the glowbit.
+    gbit.top(GlowBitController.RED)
+    gbit.bottom(GlowBitController.GREEN)
+
+    #test the sleepmode.
+    print("Going to Sleep.")
+    #TimeController.sleep(10) fails for some reason.
+
+    print("waking up!")
+    gbit.turnOff()
+
+def startProgram():
+    print("Production Mode")
+
 class BinData:
     UseURL: int
     AlertPreviousNight: int
