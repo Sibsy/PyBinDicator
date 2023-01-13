@@ -24,7 +24,7 @@ def startDebug():
 
     ##test Wifi and set DateTime
     wifi.connect()
-    wifi.setDateTime(10)
+    wifi.setDateTime(config['timezone_offset'])
     joke = wifi.callURL("https://api.chucknorris.io/jokes/random")
     print(json.loads(joke)["value"])
     #Monash.getBinData(secrets["bin_data_url"], wifi)
