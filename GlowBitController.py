@@ -18,8 +18,10 @@ OFF = (0, 0, 0)
 class GlowBitController:
     pixel_pin = board.A1
     num_pixels = 8
-    pixel_brightness = 1
-    pixels = neopixel.NeoPixel(pixel_pin, num_pixels, brightness=pixel_brightness)
+
+    def __init__(self, config):
+        self.pixel_brightness = config["brightness"]
+        self.pixels = neopixel.NeoPixel(self.pixel_pin, self.num_pixels, brightness=self.pixel_brightness)
 
     def top(self, color):
         #self.pixels.fill(color)

@@ -12,60 +12,15 @@ import Bindicator
 #import secrets
 #  from collections import defaultdict
 
-#  Debug Mode
 debugMode = True
-hasErrored = False
 
-print("Starting the Bindicator!")
 if(debugMode == False):
+    print("Starting the Bindicator in Production Mode!")
     Bindicator.startProgram()
 else:
+    print("Starting the Bindicator in Debug Mode!")
     Bindicator.startDebug()
 
-
-
-    # Get wifi details and more from a secrets.py file
-    # print("Get Secrets")
-    # try:
-    #     ParsedBinData = secrets.GetData()
-    # except ImportError:
-    #     blinkpatterns.GenericError()
-    #     print("Info we need is all in secrets. go populate it")
-
-    # print("ESP32-S2 Info")
-    # print("My MAC addr:", [hex(i) for i in wifi.radio.mac_address])
-
-    # if quickboot == 0:
-    #     print("Available WiFi networks:")
-    #     for network in wifi.radio.start_scanning_networks():
-    #         print(
-    #             "\t%s\t\tRSSI: %d\tChannel: %d"
-    #             % (str(network.ssid, "utf-8"), network.rssi, network.channel)
-    #         )
-    #     wifi.radio.stop_scanning_networks()
-
-    # print("Connecting to %s" % ParsedBinData["ssid"])
-    # wifi.radio.connect(ParsedBinData["ssid"], ParsedBinData["password"])
-    # print("Connected to %s!" % ParsedBinData["ssid"])
-    # print("My IP address is", wifi.radio.ipv4_address)
-
-    # if quickboot == 0:
-    #     ipv4 = ipaddress.ip_address("8.8.4.4")
-    #     pingRes = wifi.radio.ping(ipv4) * 1000
-    #     if pingRes > 0:
-    #         print("Internet Connectivity is up")
-    #         print("Ping google.com: %f ms" % (pingRes))
-    #     else:
-    #         print("No Internet connection or google is down?")
-
-    # pool = socketpool.SocketPool(wifi.radio)
-    # ctx = ssl.create_default_context()
-    # requests = adafruit_requests.Session(pool, ctx)
-
-    # ntp = adafruit_ntp.NTP(pool, tz_offset=10)  # Aussie gmt+10
-    # rtc.RTC().datetime = ntp.datetime
-    ##Default sleep of 1s
-    # sleeptime = 1
 
     # if ParsedBinData['BinData']['UseURL'] == 1:
     #     print("Fetching json from: ", ParsedBinData['BinData'])
