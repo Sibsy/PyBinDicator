@@ -1,5 +1,5 @@
 config = {
-    'timezone_offset': 11,
+    'timezone_offset': 10,
     'glowbit' : {
         'brightness': 0.5
         },

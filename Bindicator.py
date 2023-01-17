@@ -67,7 +67,8 @@ def startProgram():
     time = TimeController.TimeController(config["time"])
     ##Connect to wifi and set Date Time
     #wifi.connect()
-    wifi.setDateTime(11)
+    wifi.setDateTime(10)
+
     ##Get Bin Data
     ##Check Against Date
     ##Light Sleep Untill Notification Dismissal or Date Change.
