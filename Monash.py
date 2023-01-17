@@ -29,7 +29,7 @@ def get_geo_location_id(url, wifiController, address):
 
     for i in stream:
         if i["AddressSingleLine"] == address:
-            print("------------------------------------------------------------------------------------------------")
+            print('-'*50)
             print("Address is found, getting Geo Location ID.")
             return i["Id"]
 

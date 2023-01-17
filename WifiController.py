@@ -26,7 +26,7 @@ class WifiController:
         print("======================")
 
     def connect(self):
-        print("------------------------------------------------------------------------------------------------")
+        print('-'*50)
         print("Connecting to WIFI: %s" % self.SSID)
         wifi.radio.connect(self.SSID, self.Password)
         print("Connected! My IP address is: ", wifi.radio.ipv4_address)
@@ -49,7 +49,7 @@ class WifiController:
     def callURL(self, url):
         pool = socketpool.SocketPool(wifi.radio)
         requests = adafruit_requests.Session(pool, ssl.create_default_context())
-        print("------------------------------------------------------------------------------------------------")
+        print('-'*50)
         print("Calling URL(text): ", url)
         response = requests.get(url)
         result = response.text
@@ -59,7 +59,7 @@ class WifiController:
     def callURLJson(self, url):
         pool = socketpool.SocketPool(wifi.radio)
         requests = adafruit_requests.Session(pool, ssl.create_default_context())
-        print("------------------------------------------------------------------------------------------------")
+        print('-'*50)
         print("Calling URL(json): ", url)
         response = requests.get(url)
         result = response.json()

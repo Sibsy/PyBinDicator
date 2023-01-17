@@ -14,7 +14,7 @@ import Bindicator
 
 debugMode = True
 
-print('\n------------------------------------------------------------------------------------------------')
+print('-'*50)
 if(debugMode == False):
     print("***Starting the Bindicator in ->Production<- Mode!")
     Bindicator.startProgram()

@@ -39,7 +39,7 @@ def startDebug():
     #wifi.connect()
 
     bd = Monash.getBinData('https://www.monash.vic.gov.au/ocapi/Public/myarea/wasteservices?geolocationid='+ geolocationid +'&ocsvclang=en-AU', wifi)
-    print('------------------------------------------------------------------------------------------------')
+    print('-'*50)
     for key, value in bd.items():
         print("{} : {}".format(key, value))
         if((int(value[0]) - time_now.tm_mday) < 7 and int(value[1]) == time_now.tm_mon and int(value[2]) == time_now.tm_year):
@@ -49,7 +49,7 @@ def startDebug():
             print("->NEXT WEEK<- === This bin ->{}<- will be collected in days: {} \n".format(key, int(value[0]) - time_now.tm_mday))
             bin_color_display(key)
 
-    print('------------------------------------------------------------------------------------------------')
+    print('-'*50)
 
     #print(Monash.getBinData(tmpgeo, wifi))#test 2nd call request
 
