@@ -3,8 +3,8 @@
 
 #Wifi information.
 secrets = {
-    'ssid' : "Isaac",
-    'password' : "ivy.isaac21222",
+    'ssid' : "",
+    'password' : "",
     }
 
 # jsonstr = """
