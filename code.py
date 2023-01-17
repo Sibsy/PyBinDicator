@@ -14,11 +14,12 @@ import Bindicator
 
 debugMode = True
 
+print('\n------------------------------------------------------------------------------------------------')
 if(debugMode == False):
-    print("Starting the Bindicator in Production Mode!")
+    print("***Starting the Bindicator in ->Production<- Mode!")
     Bindicator.startProgram()
 else:
-    print("Starting the Bindicator in Debug Mode!")
+    print("***Starting the Bindicator in ->Debug<- Mode!")
     Bindicator.startDebug()
 
 

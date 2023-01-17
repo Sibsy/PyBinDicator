@@ -4,6 +4,9 @@ import board
 import time
 from rainbowio import colorwheel
 
+pixel_pin = board.A1
+num_pixels = 8
+
 def bootup():
     print("Booted Up")
     pixel = neopixel.NeoPixel(pixel_pin, 1)

@@ -1,6 +1,8 @@
 import neopixel
 from rainbowio import colorwheel
 import board
+import time
+from random import randint
 
 RED = (255, 0, 0)
 ORANGE = (255, 34, 0)
@@ -15,16 +17,19 @@ AQUA = (85, 125, 255)
 WHITE = (255, 255, 255)
 OFF = (0, 0, 0)
 
+
 class GlowBitController:
     pixel_pin = board.A1
     num_pixels = 8
 
     def __init__(self, config):
         self.pixel_brightness = config["brightness"]
-        self.pixels = neopixel.NeoPixel(self.pixel_pin, self.num_pixels, brightness=self.pixel_brightness)
+        self.pixels = neopixel.NeoPixel(
+            self.pixel_pin, self.num_pixels, brightness=self.pixel_brightness
+        )
 
     def top(self, color):
-        #self.pixels.fill(color)
+        # self.pixels.fill(color)
         self.pixels[0] = color
         self.pixels[1] = color
         self.pixels[2] = color
@@ -32,7 +37,7 @@ class GlowBitController:
         self.pixels.show()
 
     def bottom(self, color):
-        #self.pixels.fill(color)
+        # self.pixels.fill(color)
         self.pixels[4] = color
         self.pixels[5] = color
         self.pixels[6] = color
@@ -42,3 +47,12 @@ class GlowBitController:
     def turnOff(self):
         self.pixels.fill(OFF)
 
+    def initGlowbit(self):
+
+        for j in range(10):
+            # rcolor = randint(0, 255)
+            for i in range(self.num_pixels):
+                # rc_index = (i * 256 // self.num_pixels) + j
+                self.pixels[i] = (randint(0, 255), randint(0, 255), randint(0, 255))
+            self.pixels.show()
+            time.sleep(0.1)

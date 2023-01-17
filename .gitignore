@@ -1,2 +1,5 @@
 secrets.py
 .vscode/settings.json
+.fseventsd
+.Trashes
+.metadata_never_index

@@ -7,27 +7,53 @@ from config import config
 
 import json
 import Monash
+import BlinkPatterns
+
+address = '3/36 Panorama Street, Clayton 3168' #Replace your address to get geolocationid (Monash Council only for now)
+gbit = GlowBitController.GlowBitController(config["glowbit"]) #Global gbit
 
 def startDebug():
     ##instantiate the controllers.
-    button = ButtonController.ButtonController(config["button"])
-    gbit = GlowBitController.GlowBitController(config["glowbit"])
+    #button = ButtonController.ButtonController(config["button"])
     wifi = WifiController.WifiController(secrets)
     time = TimeController.TimeController(config["time"])
 
-    ##test the glowbit.
-    gbit.top(GlowBitController.WHITE)
-    gbit.bottom(GlowBitController.WHITE)
+    gbit.initGlowbit() #glowbit booting up
 
     ##test the button
     #button.testButton() ##WARNING: this is an execution blocking infinite loop.
 
     ##test Wifi and set DateTime
     wifi.connect()
-    wifi.setDateTime(config['timezone_offset'])
-    joke = wifi.callURL("https://api.chucknorris.io/jokes/random")
-    print(json.loads(joke)["value"])
-    #Monash.getBinData(secrets["bin_data_url"], wifi)
+    time_now = wifi.setDateTime(config['timezone_offset'])
+    print('The current date: ', time_now.tm_mday, time_now.tm_mon, time_now.tm_year)
+
+    geolocationid = Monash.get_geo_location_id('https://www.monash.vic.gov.au/api/v1/myarea/search?keywords={}'.format(address), wifi, address) #get geolocationid with the address
+
+    #exit(1) crash the program
+
+    #geolocationid = '55090461-0157-430a-9e96-bf9673a3215f'
+    print(geolocationid)
+
+    #wifi.stop_access_point()
+    #wifi.connect()
+
+    bd = Monash.getBinData('https://www.monash.vic.gov.au/ocapi/Public/myarea/wasteservices?geolocationid='+ geolocationid +'&ocsvclang=en-AU', wifi)
+    print('------------------------------------------------------------------------------------------------')
+    for key, value in bd.items():
+        print("{} : {}".format(key, value))
+        if((int(value[0]) - time_now.tm_mday) < 7 and int(value[1]) == time_now.tm_mon and int(value[2]) == time_now.tm_year):
+            print("->THIS WEEK<- === This bin ->{}<- will be collected in days: {} \n".format(key, int(value[0]) - time_now.tm_mday))
+            bin_color_display(key)
+        else:
+            print("->NEXT WEEK<- === This bin ->{}<- will be collected in days: {} \n".format(key, int(value[0]) - time_now.tm_mday))
+            bin_color_display(key)
+
+    print('------------------------------------------------------------------------------------------------')
+
+    #print(Monash.getBinData(tmpgeo, wifi))#test 2nd call request
+
+    exit(1)# to crash the program
 
     ##test the sleepmode.
     pinAlarm = button.buildPinAlarm() ## need to dispose of the ButtonController to release the pin binding for the Pin_Alarm
@@ -41,10 +67,18 @@ def startProgram():
     time = TimeController.TimeController(config["time"])
     ##Connect to wifi and set Date Time
     #wifi.connect()
-    wifi.setDateTime(10)
+    wifi.setDateTime(11)
     ##Get Bin Data
     ##Check Against Date
     ##Light Sleep Untill Notification Dismissal or Date Change.
+
+def bin_color_display(key):
+    global gbit
+    if(key == 'Landfill Waste'):
+        gbit.top(GlowBitController.RED)
+    else:
+        gbit.top(GlowBitController.YELLOW)
+    gbit.bottom(GlowBitController.GREEN)
 
 
 # class BinData:
