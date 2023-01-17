@@ -13,8 +13,6 @@ class WifiController:
         if len(self.SSID) == 0 or len(self.Password) == 0:
             raise Exception("WiFi secrets are kept in secrets.py, please add them there!")
 
-
-
     def scanNetwork(self):
         print("Available WiFi networks:")
         for network in wifi.radio.start_scanning_networks():
@@ -31,11 +29,12 @@ class WifiController:
 
         print("Connected! My IP address is: ", wifi.radio.ipv4_address)
 
-    def setDateTime(self, timezone_offset):
+    def setDateTime(self, timezone_offset) -> struct_time:
         pool = socketpool.SocketPool(wifi.radio)
         ntp = adafruit_ntp.NTP(pool, tz_offset=timezone_offset)  # aussie gmt+10
         rtc.RTC().datetime = ntp.datetime
-        print("The current Date Time is: ", ntp.datetime);
+        print("The current Date Time is: ", ntp.datetime)
+        return ntp.datetime
 
     def printNetworkInfo(self):
         print("==============")
@@ -43,7 +42,7 @@ class WifiController:
         print("My IP address: ", wifi.radio.ipv4_address)
         print("==============")
 
-    def callURL(self, url):
+    def callURL(self, url) -> str:
         pool = socketpool.SocketPool(wifi.radio)
         requests = adafruit_requests.Session(pool, ssl.create_default_context())
 
@@ -53,7 +52,7 @@ class WifiController:
         response.close()
         return result
 
-    def callURLJson(self, url):
+    def callURLJson(self, url) -> json:
         pool = socketpool.SocketPool(wifi.radio)
         requests = adafruit_requests.Session(pool, ssl.create_default_context())
 
