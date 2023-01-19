@@ -4,6 +4,10 @@ import board
 import time
 from rainbowio import colorwheel
 
+# NOTE this files contents will eventualy be migrated into GlowbitController
+# and it will be deleted.
+# All interaction with the Glowbit should be Via the Controller.
+
 def bootup():
     print("Booted Up")
     pixel = neopixel.NeoPixel(pixel_pin, 1)

@@ -4,18 +4,22 @@ import digitalio
 import time
 
 class TimeController:
-    def __init__(self, config):
-        self.sleepTime = config["sleep_time"]
-        self.useExternalWakeUp = config["use_external_wake_up"] ##TODO the plan is to have the BUTTON wake the bindicator on press.
-        self.alertBegin = config["alert_begin"]
+    sleepTime: int
+    usExternalWakeUp: bool
+    alertBegin: str # TODO: make this a time object
 
-    def sleep(self, timeToSleep = None):
+    def __init__(self, config):
+        self.sleepTime = int(config["sleep_time"])
+        self.useExternalWakeUp = bool(config["use_external_wake_up"])
+        self.alertBegin = str(config["alert_begin"])
+
+    def sleep(self, timeToSleep: int = None):
         if timeToSleep == None:
             timeToSleep = self.sleepTime
 
         time.sleep(timeToSleep)
 
-    def lightsleep(self, timeToSleep = None, pin_alarm = None):
+    def lightsleep(self, timeToSleep: int = None, pin_alarm = None):
         if timeToSleep == None:
             timeToSleep = self.sleepTime
 
@@ -26,7 +30,7 @@ class TimeController:
         else:
             alarm.light_sleep_until_alarms(time_alarm)
 
-    def deepsleep(self, timeToSleep = None, pin_alarm = None):
+    def deepsleep(self, timeToSleep: int = None, pin_alarm = None):
         #Deepsleep restarts the board when it wakes... but you CAN preserve pin states whilst in sleep.
         if timeToSleep == None:
             timeToSleep = self.sleepTime

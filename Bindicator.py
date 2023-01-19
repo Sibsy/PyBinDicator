@@ -2,11 +2,13 @@ import GlowBitController
 import TimeController
 import ButtonController
 import WifiController
+import MemoryController
 from secrets import secrets
 from config import config
 
 import json
 import Monash
+import rtc
 
 def startDebug():
     ##instantiate the controllers.
@@ -14,6 +16,7 @@ def startDebug():
     gbit = GlowBitController.GlowBitController(config["glowbit"])
     wifi = WifiController.WifiController(secrets)
     time = TimeController.TimeController(config["time"])
+    memory = MemoryController.MemoryController()
 
     ##test the glowbit.
     gbit.top(GlowBitController.WHITE)
@@ -25,13 +28,27 @@ def startDebug():
     ##test Wifi and set DateTime
     wifi.connect()
     wifi.setDateTime(config['timezone_offset'])
-    joke = wifi.callURL("https://api.chucknorris.io/jokes/random")
-    print(json.loads(joke)["value"])
+    #joke = wifi.callURL("https://api.chucknorris.io/jokes/random")
+    #print(json.loads(joke)["value"])
+    #second = wifi.callURL("https://www.monash.vic.gov.au/ocapi/Public/myarea/wasteservices?geolocationid=f8cda7aa-afec-41d8-9f41-9b0137f705ef&ocsvclang=en-AU")
+    #print(second)
     #Monash.getBinData(secrets["bin_data_url"], wifi)
 
+    print("Last Boot Time Was: ", memory.getLastWakeTime())
+
+    memory.setLastWakeTime(rtc.RTC().datetime)
+    memory.saveToMem()
+
+    ##Test the MemoryController
+    #memory.clearNotifications()
+    #memory.addNotification("test1","test2")
+    #memory.saveToMem()
+
+    gbit.turnOff()
+
     ##test the sleepmode.
-    pinAlarm = button.buildPinAlarm() ## need to dispose of the ButtonController to release the pin binding for the Pin_Alarm
-    time.deepsleep(None, pinAlarm) ##restarts the bindicator program when it wakes ##pass None and get the default SleepTime from config
+    #pinAlarm = button.buildPinAlarm()
+    #time.lightsleep(None, pinAlarm) ##restarts the bindicator program when it wakes ##pass None and get the default SleepTime from config
 
 def startProgram():
     ##instantiate the controllers.
@@ -39,9 +56,14 @@ def startProgram():
     gbit = GlowBitController.GlowBitController(config["glowbit"])
     wifi = WifiController.WifiController(secrets)
     time = TimeController.TimeController(config["time"])
+    memory = MemoryController.MemoryController()
     ##Connect to wifi and set Date Time
-    #wifi.connect()
+    wifi.connect()
     wifi.setDateTime(10)
+
+    print("Last Boot Time Was: ", memory.getLastWakeTime())
+    memory.setLastWakeTime(rtc.RTC().datetime)
+    memory.saveToMem()
     ##Get Bin Data
     ##Check Against Date
     ##Light Sleep Untill Notification Dismissal or Date Change.
