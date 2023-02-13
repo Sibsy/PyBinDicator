@@ -1,6 +1,8 @@
 import neopixel
 from rainbowio import colorwheel
 import board
+import BinProcess
+import random
 
 RED = (255, 0, 0)
 ORANGE = (255, 34, 0)
@@ -41,4 +43,25 @@ class GlowBitController:
 
     def turnOff(self):
         self.pixels.fill(OFF)
+
+    def showNotifications(self, bins: [Bin]):
+        print(bins)
+        if(len(bins) == 0):
+            return
+        elif (len(bins) == 1):
+            self.top(bins[0].Color)
+            self.bottom(bins[0].Color)
+            return
+        elif (len(bins) == 2):
+            #To Do: dont want the same pattern every time, so randomise the colors
+            start = random.randint(0,1)
+            if(start == 0):
+                self.top(bins[0].Color)
+                self.bottom(bins[1].Color)
+            else:
+                self.top(bins[1].Color)
+                self.bottom(bins[0].Color)
+
+        elif(len(bins) == 3):
+            raise Exception("3 bins isnt supported yet")
 

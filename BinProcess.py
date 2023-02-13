@@ -1,43 +1,25 @@
-import json
-import blinkpatterns
 import time
+from MemoryController import struct_TimeToString, stringToStruct_Time
+import json
 
+class Bin:
+    Label: str
+    NextCollectionDate: struct_time
+    Color: tuple
 
-def ProcessBins(JSON, STRUCT):
+    def __init__(self, _label: str, _nextCollectionDate: struct_time, _color: tuple):
+        self.Label = _label
+        self.NextCollectionDate = _nextCollectionDate
+        self.Color = _color
 
-    print("Doing Something")
-    #  Well return data here for how long to sleep for
-    calulatedsleep = 60  # placeholder for now
-    maxsleep = 1 * 60 * 60 * 12  # in seconds. (so 12 hours)
-    if calulatedsleep > maxsleep:
-        return maxsleep
-    else:
-        return calulatedsleep
+    def toJson(self) -> json:
+        return { "Label": self.Label, "Color": self.Color, "NextCollectionDate": struct_TimeToString(self.NextCollectionDate) }
 
+    def hasExpired(self) -> bool:
+        return (time.mktime(NextCollectionDate) < time.time())
 
-def StoredDataProcessor(storedData):
-    try:
-        print("DoLogic")
-
-        print(storedData["format"])
-        print("You have {} bins to process".format(len(storedData["Data"])))
-        for item in storedData["Data"]:
-            ProcessBin(item)
-    except:
-        print("StoredDataProcessing Error")
-        return 3
-    # Seconds in 12 hours
-    # (i.e. If all goes well. we shouldnt have to do anything for 12 hours)
-    return 43200
-
-
-def ProcessBin(binData):
-    print("Processing ", binData["Name"])
-
-    for date in binData["Dates"]:
-        print(date)
-        time.sleep(1)
-
-
-def UrlProcessor():
-    print("I Do Nothing Right now, so eh")
+    def isActive(self, startTime: int=0, endTime: int=0) -> bool:
+        nextCollectionDateInSeconds = time.mktime(NextCollectionDate)
+        alertStartTime = nextCollectionDateInSeconds - startTime
+        alertEndTime = nextCollectionDateInSeconds + endTime
+        return ( alertStartTime < time.time() and self.hasExpired() == False)

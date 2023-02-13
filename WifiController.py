@@ -6,14 +6,17 @@ import ssl
 import socketpool
 
 class WifiController:
-    def __init__(self, secrets):
+    SSID: str
+    Password: str
+    Retries: int
+
+    def __init__(self, secrets, config):
         self.SSID = secrets["ssid"]
         self.Password = secrets["password"]
+        self.Retries = config["retries"]
 
         if len(self.SSID) == 0 or len(self.Password) == 0:
             raise Exception("WiFi secrets are kept in secrets.py, please add them there!")
-
-
 
     def scanNetwork(self):
         print("Available WiFi networks:")
@@ -26,16 +29,35 @@ class WifiController:
         print("======================")
 
     def connect(self):
+        tries = 1
+        connected = False
         print("Connecting to WIFI: %s" % self.SSID)
-        wifi.radio.connect(self.SSID, self.Password)
+        while not connected and tries <= self.Retries:
+            try:
+                wifi.radio.connect(self.SSID, self.Password)
+                connected = True
+            except ConnectionError as e:
+                print("[ERROR] could not connect to AP, retrying: ", e)
+                continue
 
         print("Connected! My IP address is: ", wifi.radio.ipv4_address)
 
-    def setDateTime(self, timezone_offset):
-        pool = socketpool.SocketPool(wifi.radio)
-        ntp = adafruit_ntp.NTP(pool, tz_offset=timezone_offset)  # aussie gmt+10
-        rtc.RTC().datetime = ntp.datetime
-        print("The current Date Time is: ", ntp.datetime);
+    def setDateTime(self, timezone_offset) -> struct_time:
+        tries = 1
+        success = False
+        while not success and tries <= self.Retries:
+            try:
+                pool = socketpool.SocketPool(wifi.radio)
+                ntp = adafruit_ntp.NTP(pool, tz_offset=timezone_offset)  # aussie gmt+10
+                rtc.RTC().datetime = ntp.datetime
+                success = True
+            except OSError as e:
+                print("[ERROR] couldnt get time, retrying: ", e)
+                continue
+
+
+        print("The current Date Time is: ", ntp.datetime)
+        return ntp.datetime
 
     def printNetworkInfo(self):
         print("==============")
@@ -43,7 +65,7 @@ class WifiController:
         print("My IP address: ", wifi.radio.ipv4_address)
         print("==============")
 
-    def callURL(self, url):
+    def callURL(self, url) -> str:
         pool = socketpool.SocketPool(wifi.radio)
         requests = adafruit_requests.Session(pool, ssl.create_default_context())
 
@@ -53,7 +75,7 @@ class WifiController:
         response.close()
         return result
 
-    def callURLJson(self, url):
+    def callURLJson(self, url) -> json:
         pool = socketpool.SocketPool(wifi.radio)
         requests = adafruit_requests.Session(pool, ssl.create_default_context())
 

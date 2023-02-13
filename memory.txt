@@ -1,0 +1,6 @@
+{
+    "LastWakeTime": "2023/01/17/21/36/28/1/17/-1",
+    "NextWakeTime": "2023/01/19/21/36/28/1/17/-1",
+    "NotificationExpiryTime": null,
+    "CurrentNotifications": []
+}
