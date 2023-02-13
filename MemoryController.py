@@ -74,6 +74,7 @@ class MemoryController:
         notif = BinProcess.Bin(label, collectionDate, color)
         self.Notifications.append(notif)
 
+
 # ###########################
 # Might move these to a helper/ utility file in future.
 

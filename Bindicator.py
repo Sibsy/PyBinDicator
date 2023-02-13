@@ -8,6 +8,7 @@ from config import config
 
 import time
 import Monash
+import rtc
 
 def startDebug():
     ##instantiate the controllers.
@@ -31,7 +32,6 @@ def startDebug():
     #print(json.loads(joke)["value"])
     #second = wifi.callURL("https://www.monash.vic.gov.au/ocapi/Public/myarea/wasteservices?geolocationid=f8cda7aa-afec-41d8-9f41-9b0137f705ef&ocsvclang=en-AU")
     #print(second)
-
 
     print("Last Boot Time Was: ", memory.LastWakeTime)
     memory.LastWakeTime = currentTime
