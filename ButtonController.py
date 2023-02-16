@@ -11,7 +11,7 @@ class ButtonController:
 
     #constructor
     def __init__(self, config):
-        self.enableButton()
+        self.debounce = config['debounce']
 
     #de-constructor
     def __del__(self):
@@ -51,13 +51,14 @@ class ButtonController:
             time.sleep(0.5)
 
     def testButton(self):
+        self.enableButton()
         while True:
-            time.sleep(1)
+            time.sleep(0.25)
             #strangely the default for the button is True (if not pressed) and False if pressed.
             #if your button connections are a bit wonky this function can get weird and require the board to be reset.
             if(self.button.value == True):
                 self.led.value = False
-                print("Unpressed")
-            else:
                 print("Pressed")
+            else:
+                print("Unpressed")
                 self.led.value = True

@@ -6,7 +6,7 @@ import MemoryController
 from secrets import secrets
 from config import config
 
-import json
+import time
 import Monash
 import rtc
 
@@ -14,8 +14,8 @@ def startDebug():
     ##instantiate the controllers.
     button = ButtonController.ButtonController(config["button"])
     gbit = GlowBitController.GlowBitController(config["glowbit"])
-    wifi = WifiController.WifiController(secrets)
-    time = TimeController.TimeController(config["time"])
+    wifi = WifiController.WifiController(secrets, config["wifi"])
+    tCont = TimeController.TimeController(config["time"])
     memory = MemoryController.MemoryController()
 
     ##test the glowbit.
@@ -23,28 +23,30 @@ def startDebug():
     gbit.bottom(GlowBitController.WHITE)
 
     ##test the button
-    #button.testButton() ##WARNING: this is an execution blocking infinite loop.
+    button.testButton() ##WARNING: this is an execution blocking infinite loop.
 
     ##test Wifi and set DateTime
     wifi.connect()
-    wifi.setDateTime(config['timezone_offset'])
+    currentTime = wifi.setDateTime(config['timezone_offset'])
     #joke = wifi.callURL("https://api.chucknorris.io/jokes/random")
     #print(json.loads(joke)["value"])
     #second = wifi.callURL("https://www.monash.vic.gov.au/ocapi/Public/myarea/wasteservices?geolocationid=f8cda7aa-afec-41d8-9f41-9b0137f705ef&ocsvclang=en-AU")
     #print(second)
-    #Monash.getBinData(secrets["bin_data_url"], wifi)
 
-    print("Last Boot Time Was: ", memory.getLastWakeTime())
+    print("Last Boot Time Was: ", memory.LastWakeTime)
+    memory.LastWakeTime = currentTime
 
-    memory.setLastWakeTime(rtc.RTC().datetime)
-    memory.saveToMem()
+    bins = Monash.getBinData(secrets["bin_data"], wifi)
+    activeBins = list(filter(lambda x: (x.isActive(tCont.alertBegin, tCont.alertEnd) == True), bins))
+    memory.Notifications = activeBins
+
+    gbit.showNotifications(memory.Notifications)
 
     ##Test the MemoryController
-    #memory.clearNotifications()
-    #memory.addNotification("test1","test2")
-    #memory.saveToMem()
+    memory.clearNotifications()
+    memory.addNotification("test3", time.localtime(time.time()), GlowBitController.YELLOW)
+    memory.saveToMem()
 
-    gbit.turnOff()
 
     ##test the sleepmode.
     #pinAlarm = button.buildPinAlarm()
@@ -54,70 +56,45 @@ def startProgram():
     ##instantiate the controllers.
     button = ButtonController.ButtonController(config["button"])
     gbit = GlowBitController.GlowBitController(config["glowbit"])
-    wifi = WifiController.WifiController(secrets)
-    time = TimeController.TimeController(config["time"])
+    wifi = WifiController.WifiController(secrets, config["wifi"])
+    tCont = TimeController.TimeController(config["time"])
     memory = MemoryController.MemoryController()
+
+    # Note: Currently we dont want to play any animations during the bootup sequence
+    # Sleep() is code blocking and we want it to connect to wifi Whilst the animation plays.
+    gbit.top(GlowBitController.WHITE)
+    gbit.bottom(GlowBitController.WHITE)
+
     ##Connect to wifi and set Date Time
     wifi.connect()
-    wifi.setDateTime(10)
+    currentTime = wifi.setDateTime(config['timezone_offset'])
+    print("Last Boot Time Was: ", memory.LastWakeTime)
 
-    print("Last Boot Time Was: ", memory.getLastWakeTime())
-    memory.setLastWakeTime(rtc.RTC().datetime)
+    #was button hit?
+    wokenUp = wasButtonHit(memory.LastWakeTime, currentTime)
+    if(wokenUp):
+        memory.clearNotifications()
+    else:
+        #check and remove expired notifications
+        activeNotifs = list(filter(lambda x: (x.hasExpired() == False), bins))
+        memory.Notifications = activeNotifs
+
+        # replace this line with a function for your own council!
+        bins = Monash.getBinData(secrets["bin_data"], wifi)
+        memory.Notifications = bins
+        gbit.showNotifications(memory.Notifications)
+
+
+    #Determine Next Wake Time.
+    nextWakeTime = tCont.getNextWakeTime(memory.Notifications)
+
+    #Finaly, save the new memory state
+    memory.LastWakeTime = currentTime
+    memory.NextWakeTime = nextWakeTime
     memory.saveToMem()
-    ##Get Bin Data
-    ##Check Against Date
-    ##Light Sleep Untill Notification Dismissal or Date Change.
 
+    # now go back to sleep.
+    pinAlarm = button.buildPinAlarm()
+    tCont.deepsleep(nextWakeTime, pinAlarm)
 
-# class BinData:
-#     UseURL: int
-#     AlertPreviousNight: int
-#     AlertTime: str
-#     SleepTime: str
-#     StoredData: StoredData
-
-#     @staticmethod
-#     def from_dict(obj) -> 'BinData':
-#         _UseURL = int(obj.get("UseURL"))
-#         _AlertPreviousNight = int(obj.get("AlertPreviousNight"))
-#         _AlertTime = str(obj.get("AlertTime"))
-#         _SleepTime = str(obj.get("SleepTime"))
-#         _StoredData = StoredData.from_dict(obj.get("StoredData"))
-#         return BinData(_UseURL, _AlertPreviousNight, _AlertTime, _SleepTime, _StoredData)
-
-
-# class Datum:
-#     Name: str
-#     Dates: [str]
-
-
-#     def from_dict(obj) -> 'Datum':
-#         _Name = str(obj.get("Name"))
-#         _Dates = [str.from_dict(y) for y in obj.get("Dates")]
-#         return Datum(_Name, _Dates)
-
-# class Root:
-#     ssid: str
-#     password: str
-#     BinData: BinData
-
-#     def from_dict(obj: Any) -> 'Root':
-#         _ssid = str(obj.get("ssid"))
-#         _password = str(obj.get("password"))
-#         _BinData = BinData.from_dict(obj.get("BinData"))
-#         return Root(_ssid, _password, _BinData)
-
-
-# class StoredData:
-#     format: str
-#     Data: [Datum]
-
-
-#     def from_dict(obj: Any) -> 'StoredData':
-#         _format = str(obj.get("format"))
-#         _Data = [Datum.from_dict(y) for y in obj.get("Data")]
-#         return StoredData(_format, _Data)
-
-# Example Usage
-# jsonstring = json.loads(myjsonstring)
-# root = Root.from_dict(jsonstring)
+    #end program untill next wake.
